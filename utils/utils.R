@@ -121,19 +121,19 @@ if(FALSE) {
     box <- make_box_grid(orig + -64, aabb + 128, "T", 5)
     g <- sort(rep(1:5, length.out=length(box)))
     split(box, g) |> purrr::iwalk(function(x, i) {
-        write_lines(x, glue::glue("functions/vbb/details/show_zone_grid_{i}.mcfunction"))
+        write_lines(x, glue::glue("functions/vbb/zzz/show_zone_grid_{i}.mcfunction"))
     })
 
     box <- make_box_grid(orig - 4*8, aabb + 4*8*2, "A", 4)
     g <- sort(rep(1:5, length.out=length(box)))
     split(box, g) |> purrr::iwalk(function(x, i) {
-        write_lines(x, glue::glue("functions/vbb/details/show_sim4_grid_{i}.mcfunction"))
+        write_lines(x, glue::glue("functions/vbb/zzz/show_sim4_grid_{i}.mcfunction"))
     })
 
     box <- make_box_grid(orig - 6*8, aabb + 6*8*2, "A", 4)
     g <- sort(rep(1:5, length.out=length(box)))
     split(box, g) |> purrr::iwalk(function(x, i) {
-        write_lines(x, glue::glue("functions/vbb/details/show_sim6_grid_{i}.mcfunction"))
+        write_lines(x, glue::glue("functions/vbb/zzz/show_sim6_grid_{i}.mcfunction"))
     })
 
 # execute at @e[name=svb] positioned ~0.0, ~0.5, ~0.0 run function svb/show_sim6
