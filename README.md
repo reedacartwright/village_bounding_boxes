@@ -337,6 +337,8 @@ coordinate can be converted to more than one block position, and any entity
 coordinate that is on the boundary between two blocks — it is already an integer
 — is converted to the higher block position.
 
+This bug impacts both the raid triggering system and the creation of new villages.
+
 #### Raid triggering system uses a player's block position instead of entity position
 
 The function `RaidTriggerSystem::_doRaidTriggerSystem()` converts a player's
