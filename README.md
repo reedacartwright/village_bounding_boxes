@@ -12,7 +12,8 @@ boxes one and off.
 
 VBB depends on the [LiteLoaderBDS-CUI Resource Pack](https://github.com/OEOTYAN/LiteLoaderBDS-CUI/releases/tag/v1.1).
 
-VBB assumes that the village's AABB is a standard, unstretched size of 64x24x64.
+VBB assumes that the village's AABB has a standard, unstretched size of
+64.0m x 24.0m x 64.0m.
 
 ## Quick Start
 
@@ -32,7 +33,7 @@ bounding boxes.
 A village's AABB can be found in-game using bad omen or out-of-game using an NBT
 viewer like `rbedrock`.
 
-### Using Bad Omen
+### Using bad omen
 
 Bad omen disappears when a player's eyes cross the bottom, northern, and western
 bounds of the village's AABB. (On peaceful difficulty bad omen will disappear
@@ -49,28 +50,36 @@ command `/effect @s bad_omen 9999 1 true`.
 **Finding west.** Use a similar strategy to find the western boundary of the
   village. 
 
-**Finding bottom.** Finding the bottom boundary is a bit harder. Stand on a block
-  14+ blocks below the village. Give yourself bad omen. Jump (or fly up one
-  block) and see if bad omen disappears. If it does not disappear, place one
-  block below your feet and try again. If it disappears, place two blocks below
-  your feet, and the top block marks the bottom village boundary.
+**Finding bottom.** Finding the bottom boundary is a bit harder because bad omen
+will disappear with the player's eyes (and not feet) enters the village's AABB.
+Stand on a block 14+ blocks below the village. Give yourself bad omen.
+Jump (or fly up) one block and see if bad omen disappears. If it does not
+disappear, place one block below your feet and try again. If it disappears,
+place two blocks below your feet, and the top of the highest block marks the
+bottom village boundary.
 
 Once you find north, west, and bottom boundaries, put that information together
 to find the block below the bottom-north-west corner of the village. On top of
 this block, place a armor stand named "vbb" to mark the bottom-north-west
 corner of the village.
 
-### Using `rbedrock`.
+### Using rbedrock
 
-The following example code can be used to find the coordinates of the
-bottom-north-west corner of every village.
+While bad omen can be used in game to find the bottom-north-west corner of
+the village's AABB, it is low and tedious. As an alternative,
+[rbedrock](https://github.com/reedacartwright/rbedrock) can be used to find
+the bottom-north-west corners of multiple villages in bulk.
+Rbedrock is a package for the R programming language that provides read and
+write access to Bedrock worlds. The following R code can be used to find the
+coordinates of the bottom-north-west corner of every village.
 
 ```r
 library(tidyverse)
 library(rbedrock)
 dbpath <- "WORLD_ID/OR/PATH" # use list_worlds() to find
 
-# Open World DB
+# Open World DB.
+# Make sure the world is not opened in Minecraft at the same time
 db <- bedrockdb(dbpath) 
 
 # Read NBT data for every village's INFO record
@@ -86,6 +95,15 @@ tab |> select(name, X0, Y0, Z0)
 
 close(db)
 ```
+
+### Verifying the AABB
+
+Once the village has been marked, use the command `/function vbb/toggle_aabb` to
+display the the edge of the village's AABB using lavender lines. Give yourself
+bad omen and approach the AABB from the north, west, and/or below. As soon
+as the player's eyes cross the into the box from these directions (including the
+edges), bad omen will disappear. If it disappears at some other boundary on the
+north, west, or below, then the AABB is not in the right location.
 
 ## Function Reference
 
@@ -158,7 +176,7 @@ village is located (+32.0m, +12.0m, +32.0m) from the bottom-north-west corner
 of the AABB.
 
 VBB displays center points using the red crosses ![](https://shields.io/badge/-FF3040?style=flat)
-and a 2.0m x 2.0m x 20.0m vat wire frames ![](https://shields.io/badge/-29ADFF?style=flat)
+and a 2.0m x 2.0m x 20.0m blue wire frames ![](https://shields.io/badge/-29ADFF?style=flat)
 around the cross. The block positions that corresponds to the center
 points are indicated by a vertical green lines ![](https://shields.io/badge/-10E436?style=flat)
 through the centers of the blocks.
@@ -167,7 +185,7 @@ through the centers of the blocks.
 
 The exclusivity zone of a village is calculated by growing the village's AABB 
 by 64.0m in all directions. A standard village has an exclusivity zone with
-dimensions 192.0m x 152.0m x 152.0m. The exclusivity zone defines the region in
+dimensions 192.0m x 152.0m x 192.0m. The exclusivity zone defines the region in
 which an existing village can claim a newly discovered bed without creating
 a new village.
 
@@ -223,7 +241,7 @@ in the POI list. This coordinate is called the "origin" of the village. If
 every villager in the village has claimed a bed, and the village does not have
 to stretch beyond the initial AABB to encompass all POI, then the center of the
 village will coincide with the origin of the village, which will coincide with
-the bottom-north-west corner of the pillow of the bed of one of the villages.
+the bottom-north-west corner of the pillow of the bed of one of the villagers.
 
 However, an unordered map is just that, unordered. The C++ standard does not
 define any requirements on the order of elements in the map. Therefore, different
@@ -233,9 +251,10 @@ the map when loading and saving the POI list to disk. This means that the actual
 order of elements in the POI list — when it sits in memory or on disk — will vary
 between operating systems, platforms, and even different runs of the game.
 And even if a player knows how all these things influence the order of elements
-in the unordered map, they still cannot predict with 100% accuracy the order
-of elements in the unordered map because it also depends on information that
-the player does not have: the numeric ID of villagers.
+in the unordered map, they still cannot predict in game with 100% accuracy the
+order of elements in the unordered map because it also depends on information
+that the player does not have: the numeric ID of villagers and the order they
+were added to the village.
 
 It is rather unfortunate that the algorithm that calculates the village's AABB
 is order dependent, when the POI list itself has no defined order. Therefore,
@@ -246,8 +265,8 @@ information unless the village marker is moved.
 A village's AABB is recalculated whenever a POI is claimed by a villager in 
 the village or the village detects that a POI currently claimed is no longer
 valid. To avoid making the game recalculate a village's AABB, avoid adding
-or removing POI from the village, including villagers who unlink from their POI
-because they are unable to find a path to the POI.
+or removing POI from the village, including building a village where villagers
+unlink from their POI because they are unable to find a path to the POI.
 
 ### False bounding boxes
 
@@ -256,7 +275,7 @@ of the game but appear because of how other mechanics interact with one of a
 villages five bounding boxes. Most of these interactions are due to programming
 mistakes or logic errors in the development of the game.
 
-#### Raid spawning region
+#### Raid triggering region
 
 A player with bad omen triggers a raid when they enter a village's AABB.
 However, the game rounds a player's position down to the nearest integer before
@@ -273,7 +292,7 @@ When a game checks if a point-of-interest block (POI) is within the exclusivity
 zone of a village, it converts the block's position to entity coordinates.
 Therefore, a POI will be considered to be inside a zone if its
 bottom-north-west corner is inside the zone or on any edge of the zone. For
-a standard village this means that there is a 65b x 25b x 65b volume of blocks
+a standard village this means that there is a 65x25x65 volume of blocks
 that are considered "inside" the exclusivity zone. 
 
 #### Extra iron-golem spawning space
@@ -283,3 +302,87 @@ space. Additionally iron golems need 2x3x2 blocks of space when spawning. If you
 considered this extra space in addition to the 17x13x17 block spawning space,
 the total room needed for golems to spawn would be 18x15x18 blocks and the 
 spawning space would be extended 1 block north and west and 2 blocks up.
+
+### Bugs affecting village mechanics
+
+There are several programming mistakes and logic errors in the game that
+impact village mechanics.
+
+#### AABB::contains() uses double-closed intervals instead of half-open intervals
+
+When the game checks if an AABB contains a point, it uses double-closed
+intervals. This means that a point on the edge of an AABB is considered in 
+the AABB regardless of which edge it is on. This is in contrast with the way
+block positions work and the way the game checks if two AABB intersect.
+
+Consider a stone block at (0, 0, 0). An armor stand placed on top of the stone
+block will have an entity position of (0.5m, 1.0m, 0.5m) and an AABB
+of (0.25m, 1.0m, 0.25m) to (0.75m, 2.975m, 0.75m). 
+
+Now consider the AABB of the stone block, which will be (0.0m, 0.0m, 0.0m) to
+(1.0m, 1.0m, 1.0m). The top of the stone block's AABB touches the bottom of the
+armor stand's AABB along the y = 1.0m plane. These two AABBs are considered
+neighboring and not intersecting, and `AABB::intersects()` returns `false`
+for these two AABBs. In contrast, both AABBs are considered to contain the
+point (0.5m, 1.0m, 0.5m) because `AABB:contains()` returns `true` when both
+AABBs are tested against this point. Two according to the game, two AABBs
+which don't intersect can contain the same point.
+
+If `AABB::contains()` used half-open intervals, then points along the south,
+east, and upper boundaries of an AABB would not be considered "inside" the
+AABB. This would be consistent with how block positions work in the game.
+Every entity coordinate can be converted to a specific block position by
+rounding the coordinates down to the nearest integer (flooring). No entity
+coordinate can be converted to more than one block position, and any entity
+coordinate that is on the boundary between two blocks — it is already an integer
+— is converted to the higher block position.
+
+#### Raid triggering system uses a player's block position instead of entity position
+
+The function `RaidTriggerSystem::_doRaidTriggerSystem()` converts a player's
+entity coordinates into a block position, converts it back to entity
+coordinates, and then checks if a village's AABB contains the position. Due to
+the previous bug where AABBs use double-closed intervals, this allows a raid to
+be triggered before the player enters the village's AABB if the player is to
+the south, east, or above the AABB.
+
+If `_doRaidTriggerSystem()` never bothered to convert a player's entity
+coordinates into a block position then the trigger system would behave as
+expected.
+
+#### A village's boundary is calculated in entity coordinates instead of block positions
+
+A village's boundary (AABB) is calculated from the location of all the claimed
+POI in the village. From a player's standpoint it is counter intuitive that
+entity positions of POI are used and not their block positions.
+
+Consider a village with a workstation at x = 0, and another workstation at
+x = 64. Intuitively the west boundary of the village should align with the west
+side of the workstation at x = 0 and the east boundary of the village should
+align with the east boundary of the workstation at x = 64. However, because
+only the bottom-north-west corner of the POI are considered when calculating the
+village's boundary, the east boundary of the village is actually aligned with
+the west side side of the workstation at x = 64.
+
+Fixing this is rather straight forward by ensuring that a village's AABB
+encompasses both the bottom-north-west and top-south-east corners of a POI
+block.
+
+#### A village's boundary depends on the order of elements in the POI list
+
+When a village's boundary (AABB) is calculated, it's final value depends
+on the order of the POI in the village's claimed POI list. Two villages created
+using the same POI locations can have completely different AABBs due to the POI
+order varying between them.
+
+As an alternative to the current algorithm, a village's boundary can be
+calculated without depending on the order of the POI. Below is an example 
+using the x-axis, and other axes can be calculated similarly.
+ - Find the mid point of the village based on the western edge of the
+   western-most claimed POI and the eastern edge of the eastern-most claimed
+   POI.
+ - Create an AABB centered on this mid point that is 64.0m wide. Round the
+   western edge down to the nearest integer (floor), and round the eastern edge
+   up to the nearest integer (ceiling).
+ - Increase the AABB west and/or east as necessary to include the western and
+ eastern edges of all POI as necessary.
