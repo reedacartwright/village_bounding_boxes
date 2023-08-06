@@ -54,7 +54,7 @@ with the command `/effect @s bad_omen 9999 1 true`.
 **Finding west.** Use a similar strategy to find the western boundary of the
   village. 
 
-**Finding bottom.** Finding the bottom boundary is a bit harder because bad omen
+**Finding the bottom.** Finding the bottom boundary is a bit harder because bad omen
 will disappear when the player's eyes (and not feet) enters the village's AABB.
 Stand on a block 14+ blocks below the village. Give yourself bad omen.
 Jump (or fly up) one block and see if bad omen disappears. If it does not
@@ -103,7 +103,7 @@ close(db)
 ### Verifying the AABB
 
 Once the village has been marked, use the command `/function vbb/toggle_aabb` to
-display the the edge of the village's AABB using lavender lines. Give yourself
+display the edge of the village's AABB using lavender lines. Give yourself
 bad omen and approach the AABB from the north, west, and/or below. As soon
 as the player's eyes cross the into the box from these directions (including the
 edges), bad omen will disappear. If it disappears at some other boundary on the
@@ -220,7 +220,7 @@ VBB displays activation regions using apricot edges ![](https://shields.io/badge
 The spawning space for cats and iron golems is different than other village
 bounding boxes, as it uses block positions instead of entity coordinates.
 The spawning space is calculated based on the center point of the village. First
-the the center point is rounded down and converted to a block position. This
+the center point is rounded down and converted to a block position. This
 block is then used as a center of a 17b x 13b x 17b region of blocks. Golems
 can spawn on the bottom-north-west corner of blocks in the region, and higher
 blocks are preferred before lower blocks. There are additional conditions as
@@ -231,7 +231,7 @@ VBB displays the spawning spaces using white edges ![](https://shields.io/badge/
 #### Emigration region
 
 A villager, iron golem, or other village dweller can migrate to a new village
-if it far enough outside a village's AABB.  The emigration region is calculated
+if it is far enough outside a village's AABB.  The emigration region is calculated
 by growing a village's AABB by 10.0m in all directions. Any dweller outside this
 boundary is in the emigration region and is able to migrate to a new village.
 
@@ -392,9 +392,9 @@ side of the workstation at x = 0 and the east boundary of the village should
 align with the east boundary of the workstation at x = 64. However, because
 only the bottom-north-west corner of the POI are considered when calculating the
 village's boundary, the east boundary of the village is actually aligned with
-the west side side of the workstation at x = 64.
+the west side of the workstation at x = 64.
 
-Fixing this is rather straight forward; ensure that a village's AABB
+Fixing this is rather straightforward; ensure that a village's AABB
 encompasses both the bottom-north-west and top-south-east corners of all
 claimed POI blocks.
 
@@ -408,10 +408,10 @@ order varying between them.
 As an alternative to the current algorithm, a village's boundary can be
 calculated without depending on the order of the POI. Below is an example 
 using the x-axis, and other axes can be calculated similarly.
- - Find the mid point of the village based on the western edge of the
+ - Find the midpoint of the village based on the western edge of the
    western-most claimed POI and the eastern edge of the eastern-most claimed
    POI.
- - Create an AABB centered on this mid point that is 64.0m wide. Round the
+ - Create an AABB centered on this midpoint that is 64.0m wide. Round the
    western edge down to the nearest integer (floor), and round the eastern edge
    up to the nearest integer (ceiling).
  - Increase the AABB west and/or east as necessary to include the western and
