@@ -300,7 +300,7 @@ mistakes or logic errors in the development of the game.
 
 #### Raid triggering region
 
-A player with bad omen triggers a raid when they enter a village's AABB.
+A player with bad omen triggers a raid when their position (i.e. eyes) enters a village's AABB.
 However, the game rounds a player's position down to the nearest integer before
 checking if the player is inside the village's AABB. Additionally, due to a
 logic error, a position on the edge of the AABB is considered inside the AABB
