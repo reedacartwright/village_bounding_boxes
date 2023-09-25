@@ -315,10 +315,20 @@ When a game checks if a point-of-interest block (POI) is within the exclusivity
 zone of a village, it converts the block's position to entity coordinates.
 Therefore, a POI will be considered to be inside an exclusivity zone if its
 bottom-north-west corner is inside the zone or on any edge of the zone. For
-a standard village this means that there is a 65x25x65 volume of blocks
+a standard village this means that there is a 193x153x193 volume of blocks
 that are considered "inside" the exclusivity zone. Even if the POI is inside
 the exclusivity zone, the game may still create a new village due to additional
 conditions.
+
+#### Unstretched village area
+
+The default size of a village is 64.0m x 24.0m x 64.0m, and the size of a village
+will [grow to accomodate every POI in the village](#calculation-of-the-aabb-and-center-of-the-village).
+Similar to the POI assignment zone, a POI will be considered inside the village's
+bounding box if its bottom-north-west corner is inside the village's bounding box
+or touching any edge of the box. For a standard village, this means that there is
+a 65x25x65 volume of blocks where a POI can be placed without causing the size of 
+the village to increase as long as the origin of the village does not change.
 
 #### Extra iron-golem spawning space
 
